@@ -3,7 +3,7 @@ package ac.grim.grimac.checks;
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.api.AbstractCheck;
 import ac.grim.grimac.api.config.ConfigManager;
-import ac.grim.grimac.api.events.FlagEvent;
+import ac.grim.grimac.api.events.GrimFlagEvent;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.common.ConfigReloadObserver;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -14,6 +14,7 @@ import io.github.retrooper.packetevents.util.folia.FoliaScheduler;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.Nullable;
 
 // Class from https://github.com/Tecnio/AntiCheatBase/blob/master/src/main/java/me/tecnio/anticheat/check/Check.java
 @Getter
@@ -58,7 +59,7 @@ public class Check implements AbstractCheck, ConfigReloadObserver {
             this.description = checkData.description();
             this.displayName = this.checkName;
         }
-        //
+
         reload();
     }
 
@@ -74,7 +75,7 @@ public class Check implements AbstractCheck, ConfigReloadObserver {
     }
 
     public final boolean flagAndAlert(String verbose) {
-        if (flag()) {
+        if (flag(verbose)) {
             alert(verbose);
             return true;
         }
@@ -86,10 +87,14 @@ public class Check implements AbstractCheck, ConfigReloadObserver {
     }
 
     public final boolean flag() {
+        return flag(null);
+    }
+
+    public final boolean flag(@Nullable String verbose) {
         if (player.disableGrim || (experimental && !player.isExperimentalChecks()) || exempted)
             return false; // Avoid calling event if disabled
 
-        FlagEvent event = new FlagEvent(player, this);
+        GrimFlagEvent event = new GrimFlagEvent(player, this, verbose);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return false;
 
