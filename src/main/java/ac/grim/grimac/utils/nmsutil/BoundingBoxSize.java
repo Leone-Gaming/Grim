@@ -52,7 +52,8 @@ public final class BoundingBoxSize {
             return 0.9f;
         } else if (EntityTypes.PHANTOM.equals(type)) {
             if (packetEntity instanceof PacketEntitySizeable) {
-                return 0.9f + ((PacketEntitySizeable) packetEntity).size * 0.2f;
+                PacketEntitySizeable sizeable = (PacketEntitySizeable) packetEntity;
+                return 0.9f + sizeable.size * 0.2f;
             }
 
             return 1.5f;
@@ -72,7 +73,8 @@ public final class BoundingBoxSize {
             return 1.4f;
         } else if (EntityTypes.MAGMA_CUBE.equals(type)) {
             if (packetEntity instanceof PacketEntitySizeable) {
-                float size = ((PacketEntitySizeable) packetEntity).size;
+                PacketEntitySizeable sizeable = (PacketEntitySizeable) packetEntity;
+                float size = sizeable.size;
                 return player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_20_5)
                         ? 0.52f * size : player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9)
                         ? 2.04f * (0.255f * size)
@@ -92,7 +94,8 @@ public final class BoundingBoxSize {
             return 1f;
         } else if (EntityTypes.SLIME.equals(type)) {
             if (packetEntity instanceof PacketEntitySizeable) {
-                float size = ((PacketEntitySizeable) packetEntity).size;
+                PacketEntitySizeable sizeable = (PacketEntitySizeable) packetEntity;
+                float size = sizeable.size;
                 return player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_20_5)
                         ? 0.52f * size : player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9)
                         ? 2.04f * (0.255f * size) : 0.51000005f * size;
@@ -298,7 +301,8 @@ public final class BoundingBoxSize {
             return 0.4f;
         } else if (EntityTypes.MAGMA_CUBE.equals(type)) {
             if (packetEntity instanceof PacketEntitySizeable) {
-                float size = ((PacketEntitySizeable) packetEntity).size;
+                PacketEntitySizeable sizeable = (PacketEntitySizeable) packetEntity;
+                float size = sizeable.size;
                 return player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_20_5)
                         ? 0.52f * size : player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9)
                         ? 2.04f * (0.255f * size)
@@ -318,7 +322,8 @@ public final class BoundingBoxSize {
             return 1.25f;
         } else if (EntityTypes.PHANTOM.equals(type)) {
             if (packetEntity instanceof PacketEntitySizeable) {
-                return 0.5f + ((PacketEntitySizeable) packetEntity).size * 0.1f;
+                PacketEntitySizeable sizeable = (PacketEntitySizeable) packetEntity;
+                return 0.5f + sizeable.size * 0.1f;
             }
 
             return 1.8f;
@@ -346,7 +351,8 @@ public final class BoundingBoxSize {
             return 1.6f;
         } else if (EntityTypes.SLIME.equals(type)) {
             if (packetEntity instanceof PacketEntitySizeable) {
-                float size = ((PacketEntitySizeable) packetEntity).size;
+                PacketEntitySizeable sizeable = (PacketEntitySizeable) packetEntity;
+                float size = sizeable.size;
                 return player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_20_5)
                         ? 0.52f * size : player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9)
                         ? 2.04f * (0.255f * size)
