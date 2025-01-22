@@ -43,7 +43,7 @@ public class OffsetHandler extends Check implements PostPredictionCheck {
         if ((offset >= threshold || offset >= immediateSetbackThreshold) && flag()) {
             advantageGained += offset;
 
-            boolean isSetback = advantageGained >= maxAdvantage || offset >= immediateSetbackThreshold;
+            boolean isSetback = (advantageGained >= maxAdvantage || offset >= immediateSetbackThreshold) && !isNoSetbackPermission();
             giveOffsetLenienceNextTick(offset);
 
             if (isSetback) {

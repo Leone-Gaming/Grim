@@ -7,6 +7,7 @@ import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.PredictionComplete;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEntityAction;
 
@@ -21,6 +22,10 @@ public class ElytraC extends Check implements PostPredictionCheck {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
+        if (player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_8)) {
+            return;
+        }
+
         if (player.gamemode == GameMode.SPECTATOR) {
             glideThisTick = glideLastTick = false;
         }

@@ -19,6 +19,10 @@ public class ElytraA extends Check implements PostPredictionCheck {
     }
 
     public void onStartGliding(PacketReceiveEvent event) {
+        if (player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_8)) {
+            return;
+        }
+
         if (player.isGliding && flagAndAlert()) {
             setback = true;
             if (shouldModifyPackets()) {
