@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-@CheckData(name = "Prediction (Debug)")
 public class DebugHandler extends Check implements PostPredictionCheck {
 
     Set<Player> listeners = new CopyOnWriteArraySet<>(new HashSet<>());

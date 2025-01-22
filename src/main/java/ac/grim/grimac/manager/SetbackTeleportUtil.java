@@ -309,7 +309,7 @@ public class SetbackTeleportUtil extends Check implements PostPredictionCheck {
                 }
                 continue;
             }
-            // No farther setbacks before the player's transactoin
+            // No farther setbacks before the player's transaction
             break;
         }
 

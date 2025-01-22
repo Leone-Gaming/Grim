@@ -560,7 +560,7 @@ public class GrimPlayer implements GrimUser {
         FoliaScheduler.getAsyncScheduler().runNow(GrimAPI.INSTANCE.getPlugin(), t -> {
             for (AbstractCheck check : checkManager.allChecks.values()) {
                 if (check instanceof Check) {
-                    ((Check) check).updateExempted();
+                    ((Check) check).updatePermissions();
                 }
             }
         });
@@ -842,6 +842,7 @@ public class GrimPlayer implements GrimUser {
     @Getter @Setter private boolean experimentalChecks = false;
     @Getter private boolean cancelDuplicatePacket = true;
     @Getter @Setter private boolean exemptElytra = false;
+    @Getter private boolean mitigateAutoblock;
 
     @Override
     public void reload(ConfigManager config) {
@@ -850,6 +851,7 @@ public class GrimPlayer implements GrimUser {
         maxTransactionTime = GrimMath.clamp(config.getIntElse("max-transaction-time", 60), 1, 180);
         ignoreDuplicatePacketRotation = config.getBooleanElse("ignore-duplicate-packet-rotation", false);
         cancelDuplicatePacket = config.getBooleanElse("cancel-duplicate-packet", true);
+        mitigateAutoblock = config.getBooleanElse("mitigate-autoblock", false);
         // reload all checks
         for (AbstractCheck value : checkManager.allChecks.values()) value.reload();
         // reload punishment manager

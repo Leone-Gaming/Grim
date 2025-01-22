@@ -32,6 +32,10 @@ import ac.grim.grimac.checks.impl.timer.NegativeTimer;
 import ac.grim.grimac.checks.impl.timer.TickTimer;
 import ac.grim.grimac.checks.impl.timer.Timer;
 import ac.grim.grimac.checks.impl.timer.VehicleTimer;
+import ac.grim.grimac.checks.impl.vehicle.VehicleA;
+import ac.grim.grimac.checks.impl.vehicle.VehicleB;
+import ac.grim.grimac.checks.impl.vehicle.VehicleC;
+import ac.grim.grimac.checks.impl.vehicle.VehicleD;
 import ac.grim.grimac.checks.impl.velocity.ExplosionHandler;
 import ac.grim.grimac.checks.impl.velocity.KnockbackHandler;
 import ac.grim.grimac.checks.type.*;
@@ -93,14 +97,12 @@ public class CheckManager {
                 .put(NoFall.class, new NoFall(player))
                 .put(BadPacketsO.class, new BadPacketsO(player))
                 .put(BadPacketsA.class, new BadPacketsA(player))
-                .put(BadPacketsB.class, new BadPacketsB(player))
                 .put(BadPacketsC.class, new BadPacketsC(player))
                 .put(BadPacketsD.class, new BadPacketsD(player))
                 .put(BadPacketsE.class, new BadPacketsE(player))
                 .put(BadPacketsF.class, new BadPacketsF(player))
                 .put(BadPacketsG.class, new BadPacketsG(player))
                 .put(BadPacketsI.class, new BadPacketsI(player))
-                .put(BadPacketsJ.class, new BadPacketsJ(player))
                 .put(BadPacketsK.class, new BadPacketsK(player))
                 .put(BadPacketsL.class, new BadPacketsL(player))
                 .put(BadPacketsN.class, new BadPacketsN(player))
@@ -129,6 +131,10 @@ public class CheckManager {
                 .put(PacketOrderO.class, new PacketOrderO(player))
                 .put(TransactionOrder.class, new TransactionOrder(player))
                 .put(SprintA.class, new SprintA(player))
+                .put(VehicleA.class, new VehicleA(player))
+                .put(VehicleB.class, new VehicleB(player))
+                .put(VehicleC.class, new VehicleC(player))
+                .put(VehicleD.class, new VehicleD(player))
                 .put(SetbackBlocker.class, new SetbackBlocker(player)) // Must be last class otherwise we can't check while blocking packets
                 .build();
         positionCheck = new ImmutableClassToInstanceMap.Builder<PositionCheck>()
@@ -167,7 +173,6 @@ public class CheckManager {
                 .put(OffsetHandler.class, new OffsetHandler(player))
                 .put(SuperDebug.class, new SuperDebug(player))
                 .put(DebugHandler.class, new DebugHandler(player))
-                .put(EntityControl.class, new EntityControl(player))
                 .put(BadPacketsX.class, new BadPacketsX(player))
                 .put(NoSlow.class, new NoSlow(player))
                 .put(SprintB.class, new SprintB(player))
@@ -423,17 +428,21 @@ public class CheckManager {
     }
 
     private void init() {
-        // Fast non-thread safe check
-        if (inited) return;
-        // Slow thread safe check
-        if (!initedAtomic.compareAndSet(false, true)) return;
+        if (inited || initedAtomic.getAndSet(true)) return;
         inited = true;
 
-        for (AbstractCheck check : allChecks.values()) {
-            if (check.getCheckName() != null) {
-                String permissionName = "grim.exempt." + check.getCheckName().toLowerCase();
-                Permission permission = Bukkit.getPluginManager().getPermission(permissionName);
+        final String[] permissions = {
+                "grim.exempt.",
+                "grim.nosetback.",
+                "grim.nomodifypacket.",
+        };
 
+        for (final AbstractCheck check : allChecks.values()) {
+            if (check.getCheckName() == null) continue;
+            final String id = check.getCheckName().toLowerCase();
+            for (String permissionName : permissions) {
+                permissionName += id;
+                final Permission permission = Bukkit.getPluginManager().getPermission(permissionName);
                 if (permission == null) {
                     Bukkit.getPluginManager().addPermission(new Permission(permissionName, PermissionDefault.FALSE));
                 } else {
