@@ -1,6 +1,6 @@
 package ac.grim.grimac.utils.data.packetentity;
 
-import ac.grim.grimac.checks.impl.movement.NoSlowE;
+import ac.grim.grimac.checks.impl.sprint.SprintD;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.collisions.datatypes.SimpleCollisionBox;
 import ac.grim.grimac.utils.data.attribute.ValuedAttribute;
@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 public class PacketEntitySelf extends PacketEntity {
 
@@ -47,7 +48,7 @@ public class PacketEntitySelf extends PacketEntity {
             setAttribute(Attributes.STEP_HEIGHT, 0.5f);
         }
 
-        getAttribute(Attributes.SCALE).get().withSetRewriter((oldValue, newValue) -> {
+        getAttribute(Attributes.SCALE).orElseThrow(() -> new NoSuchElementException("No value present")).withSetRewriter((oldValue, newValue) -> {
             if (player.getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_20_5) || (newValue).equals(oldValue)) {
                 return oldValue;
             } else {
@@ -127,7 +128,7 @@ public class PacketEntitySelf extends PacketEntity {
                     }
 
                     final int swiftSneak = player.getInventory().getLeggings().getEnchantmentLevel(EnchantmentTypes.SWIFT_SNEAK, player.getClientVersion());
-                    final double clamped = GrimMath.clampFloat(0.3F + (swiftSneak * 0.15F), 0f, 1f);
+                    final double clamped = GrimMath.clamp(0.3f + swiftSneak * 0.15f, 0f, 1f);
                     if (player.getClientVersion().isOlderThan(ClientVersion.V_1_21)) {
                         return clamped;
                     }
@@ -150,7 +151,7 @@ public class PacketEntitySelf extends PacketEntity {
     @Override
     public void addPotionEffect(PotionType effect, int amplifier) {
         if (effect == PotionTypes.BLINDNESS && !hasPotionEffect(PotionTypes.BLINDNESS)) {
-            player.checkManager.getPostPredictionCheck(NoSlowE.class).startedSprintingBeforeBlind = player.isSprinting;
+            player.checkManager.getPostPredictionCheck(SprintD.class).startedSprintingBeforeBlind = player.isSprinting;
         }
 
         player.pointThreeEstimator.updatePlayerPotions(effect, amplifier);

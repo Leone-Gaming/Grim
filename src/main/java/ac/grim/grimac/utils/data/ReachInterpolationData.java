@@ -34,6 +34,7 @@ public class ReachInterpolationData {
     private int interpolationStepsLowBound = 0;
     private int interpolationStepsHighBound = 0;
     private int interpolationSteps = 1;
+    private boolean expandNonRelative = false;
 
     public ReachInterpolationData(GrimPlayer player, SimpleCollisionBox startingLocation, TrackedPosition position, PacketEntity entity) {
         final boolean isPointNine = !player.compensatedEntities.getSelf().inVehicle() && player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9);
@@ -104,7 +105,7 @@ public class ReachInterpolationData {
 
         // Check if there's actual overlap along each axis
         if (overlapMinX > overlapMaxX || overlapMinY > overlapMaxY || overlapMinZ > overlapMaxZ) {
-            return null; // No overlap, return null or an appropriate "empty" box representation
+            return NoCollisionBox.INSTANCE; // No overlap, return null or an appropriate "empty" box representation
         }
 
         // Return the overlapping hitbox
@@ -143,6 +144,9 @@ public class ReachInterpolationData {
                     startingLocation.maxZ + (step * stepMaxZ)));
         }
 
+        if (expandNonRelative)
+            minimumInterpLocation.expand(0.03125D, 0.015625D, 0.03125D);
+
         return minimumInterpLocation;
     }
 
@@ -172,12 +176,6 @@ public class ReachInterpolationData {
                     startingLocation.maxX + (step * stepMaxX),
                     startingLocation.maxY + (step * stepMaxY),
                     startingLocation.maxZ + (step * stepMaxZ)));
-
-            if (overlapLocation == null) {
-                // No overlap found, you might want to handle this case specifically
-                // For example, return null or a default box
-                return NoCollisionBox.INSTANCE;
-            }
         }
 
         return overlapLocation;
@@ -204,5 +202,9 @@ public class ReachInterpolationData {
                 ", interpolationStepsLowBound=" + interpolationStepsLowBound +
                 ", interpolationStepsHighBound=" + interpolationStepsHighBound +
                 '}';
+    }
+
+    public void expandNonRelative() {
+        expandNonRelative = true;
     }
 }

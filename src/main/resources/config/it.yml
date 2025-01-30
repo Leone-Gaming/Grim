@@ -125,7 +125,7 @@ LineOfSightPlace:
     - STRUCTURE_BLOCK
     - JIGSAW
 
-NoSlowA:
+NoSlow:
   # Limite per rilevare l'uso scorretto dell'oggetto
   threshold: 0.001
   # Livello di violazione per l'uso scorretto dell'oggetto
@@ -202,6 +202,8 @@ debug-pipeline-on-join: false
 
 # Enables experimental checks
 experimental-checks: false
+
+mitigate-autoblock: false
 
 # Grim sometimes cancels illegal packets such as with timer, after X packets in a second cancelled, when should
 # we simply kick the player? This is required as some packet limiters don't count packets cancelled by grim.

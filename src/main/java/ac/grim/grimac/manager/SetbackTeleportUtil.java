@@ -50,13 +50,13 @@ public class SetbackTeleportUtil extends Check implements PostPredictionCheck {
     public boolean blockOffsets = false;
     // This required setback data is the head of the teleport.
     // It is set by both bukkit and netty due to going on the bukkit thread to setback players
+    @Getter
     private SetBackData requiredSetBack = null;
     public SetbackPosWithVector lastKnownGoodPosition;
     // Are we currently sending setback stuff?
     public boolean isSendingSetback = false;
     public int cheatVehicleInterpolationDelay = 0;
     private long lastWorldResync = 0;
-
 
     public SetbackTeleportUtil(GrimPlayer player) {
         super(player);
@@ -111,8 +111,7 @@ public class SetbackTeleportUtil extends Check implements PostPredictionCheck {
         // Setbacks aren't allowed
         if (player.disableGrim) return true;
         // Player has permission to cheat, permission not given to OP by default.
-        if (player.bukkitPlayer != null && player.noSetbackPermission) return true;
-        return false;
+        return player.bukkitPlayer != null && player.noSetbackPermission;
     }
 
     private void simulateFriction(Vector vector) {
@@ -310,7 +309,7 @@ public class SetbackTeleportUtil extends Check implements PostPredictionCheck {
                 }
                 continue;
             }
-            // No farther setbacks before the player's transactoin
+            // No farther setbacks before the player's transaction
             break;
         }
 
@@ -379,16 +378,9 @@ public class SetbackTeleportUtil extends Check implements PostPredictionCheck {
         Column column = player.compensatedWorld.getChunk(GrimMath.floor(player.x) >> 4, GrimMath.floor(player.z) >> 4);
 
         // If true, the player is in an unloaded chunk
-        return !player.disableGrim && (column == null || column.transaction >= player.lastTransactionReceived.get() ||
+        return !player.disableGrim && (column == null || column.transaction() >= player.lastTransactionReceived.get() ||
                 // The player hasn't loaded past the DOWNLOADING TERRAIN screen
                 !player.getSetbackTeleportUtil().hasAcceptedSpawnTeleport);
-    }
-
-    /**
-     * @return The current data for the setback, regardless of whether it is complete or not
-     */
-    public SetBackData getRequiredSetBack() {
-        return requiredSetBack;
     }
 
     public void addSentTeleport(Location position, int transaction, RelativeFlag flags, boolean plugin, int teleportId) {
@@ -410,7 +402,7 @@ public class SetbackTeleportUtil extends Check implements PostPredictionCheck {
             safePosition = safePosition.withZ(safePosition.getZ() + lastKnownGoodPosition.pos.getZ());
         }
 
-        data = new TeleportData(safePosition, flags, transaction, teleportId);
+        data = new TeleportData(safePosition, new RelativeFlag(0b11000), transaction, teleportId);
         requiredSetBack = new SetBackData(data, player.xRot, player.yRot, null, false, plugin);
 
         this.lastKnownGoodPosition = new SetbackPosWithVector(safePosition, new Vector());

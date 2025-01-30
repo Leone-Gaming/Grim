@@ -28,10 +28,11 @@ import io.github.retrooper.packetevents.util.viaversion.ViaVersionUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PacketEntityReplication extends Check implements PacketCheck {
 
-    private boolean hasSentPreWavePacket = true;
+    private final AtomicBoolean hasSentPreWavePacket = new AtomicBoolean(true);
 
     // Let's imagine the player is on a boat.
     // The player breaks this boat
@@ -315,7 +316,6 @@ public class PacketEntityReplication extends Check implements PacketCheck {
                     if (vehicleID == -1) { // Dismounting
                         vehicleID = trackerData.getLegacyPointEightMountedUpon();
                         handleMountVehicle(event, vehicleID, new int[]{}); // The vehicle is empty
-                        return;
                     } else { // Mounting
                         trackerData.setLegacyPointEightMountedUpon(vehicleID);
                         handleMountVehicle(event, vehicleID, new int[]{attachID});
@@ -409,10 +409,8 @@ public class PacketEntityReplication extends Check implements PacketCheck {
     private void handleMoveEntity(PacketSendEvent event, int entityId, double deltaX, double deltaY, double deltaZ, Float yaw, Float pitch, boolean isRelative, boolean hasPos) {
         TrackerData data = player.compensatedEntities.getTrackedEntity(entityId);
 
-        if (!hasSentPreWavePacket) {
-            hasSentPreWavePacket = true;
-            player.sendTransaction();
-        }
+        final boolean didNotSendPreWave = hasSentPreWavePacket.compareAndSet(false, true);
+        if (didNotSendPreWave) player.sendTransaction();
 
         if (data != null) {
             // Update the tracked server's entity position
@@ -441,12 +439,11 @@ public class PacketEntityReplication extends Check implements PacketCheck {
                     return;
                 }
 
-                player.compensatedEntities.entityMap.updateEntityPosition(player.compensatedEntities.entityMap.get(entityId), new Vector3d(data.getX() + deltaX, data.getY() + deltaY, data.getZ() + deltaZ));
+//                player.compensatedEntities.entityMap.updateEntityPosition(player.compensatedEntities.entityMap.get(entityId), new Vector3d(data.getX() + deltaX, data.getY() + deltaY, data.getZ() + deltaZ));
                 data.setX(data.getX() + deltaX);
                 data.setY(data.getY() + deltaY);
                 data.setZ(data.getZ() + deltaZ);
             } else {
-                player.compensatedEntities.entityMap.updateEntityPosition(player.compensatedEntities.entityMap.get(entityId), new Vector3d(deltaX, deltaY, deltaZ));
                 data.setX(deltaX);
                 data.setY(deltaY);
                 data.setZ(deltaZ);
@@ -511,7 +508,7 @@ public class PacketEntityReplication extends Check implements PacketCheck {
     }
 
     public void tickStartTick() {
-        hasSentPreWavePacket = false;
+        hasSentPreWavePacket.set(false);
     }
 
     private int maxFireworkBoostPing = 1000;

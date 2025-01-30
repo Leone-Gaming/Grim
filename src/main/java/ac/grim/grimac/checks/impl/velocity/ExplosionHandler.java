@@ -204,27 +204,14 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
         }
 
         // 100% known kb was taken
-        if (player.likelyExplosions != null) {
+        if (player.likelyExplosions != null && !player.compensatedEntities.getSelf().isDead) {
             if (player.likelyExplosions.offset > offsetToFlag) {
-                if (flag()) {
-                    if (getViolations() > setbackVL) {
-                        player.getSetbackTeleportUtil().executeViolationSetback();
-                    }
-                }
-
-                String formatOffset = "o: " + formatOffset(offset);
-
-                if (player.likelyExplosions.offset == Integer.MAX_VALUE) {
-                    formatOffset = "ignored explosion";
-                }
-
-                alert(formatOffset);
+                flagAndAlertWithSetback(player.likelyExplosions.offset == Integer.MAX_VALUE ? "ignored explosion" : "o: " + formatOffset(offset));
             } else {
                 reward();
             }
         }
     }
-
 
     public VelocityData getPossibleExplosions(int lastTransaction, boolean isJustTesting) {
         handleTransactionPacket(lastTransaction);

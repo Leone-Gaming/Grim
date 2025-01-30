@@ -132,7 +132,7 @@ LineOfSightPlace:
 # Grim considera erros no netcode. Difícil de gerar falsos positivos, até mesmo spamando o blotão direito e a offhand.
 # Muito mais estável que outros anticheats, mas por favor, reporte quaisquer falsos positivos. Eu já arrumei diversos
 # erros de netcode.
-NoSlowA:
+NoSlow:
   # Quanto de desalinhamento é considerado trapaça?
   # Por padrão é menor que os outros.
   # Em 0.03-0.2 detecta com consistência.
@@ -230,6 +230,8 @@ debug-pipeline-on-join: false
 
 # Habilita verificações experimentais.
 experimental-checks: false
+
+mitigate-autoblock: false
 
 # Grim às vezes cancela pacotes ilegais como com o timer, depois de X pacotes em um segundo que foram cancelados, quando
 # deve-se simplesmente expulsar o jogador? Isso é requirido já que alguns limitadores de pacotes não contam pacotes
