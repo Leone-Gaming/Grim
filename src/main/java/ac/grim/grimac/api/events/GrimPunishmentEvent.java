@@ -14,7 +14,7 @@ public class GrimPunishmentEvent extends FlagEvent {
     private final @Nullable PunishmentManager.ParsedCommand command;
 
     public GrimPunishmentEvent(GrimUser grimUser, AbstractCheck check, PunishmentType type, @Nullable String verbose, PunishmentManager.ParsedCommand command) {
-        super(grimUser, check);
+        super(grimUser, check, verbose);
 
         this.type = type;
         this.verbose = verbose;

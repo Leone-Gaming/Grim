@@ -11,7 +11,7 @@ public class GrimFlagEvent extends FlagEvent {
     private final @Nullable String verbose;
 
     public GrimFlagEvent(GrimUser grimUser, AbstractCheck check, @Nullable String verbose) {
-        super(grimUser, check);
+        super(grimUser, check, verbose);
 
         this.verbose = verbose;
     }
